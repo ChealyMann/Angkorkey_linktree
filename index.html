@@ -27,6 +27,7 @@
     }
     @keyframes spin{ to{ transform:rotate(360deg) } }
     @keyframes float{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-6px) } }
+    @keyframes pulse-glow{ 0%,100%{ opacity:.6 } 50%{ opacity:1 } }
 
     /* Toast */
     .toast{
@@ -36,6 +37,12 @@
       box-shadow:0 4px 20px rgba(34,211,238,.4);
     }
     .toast.show{ opacity:1 }
+
+    .browser-escape-btn{
+      background:linear-gradient(135deg, rgba(var(--aqua),.2), rgba(var(--neon),.2));
+      border:1px solid rgba(var(--aqua),.4);
+      animation:pulse-glow 2s ease-in-out infinite;
+    }
   </style>
 </head>
 <body class="relative min-h-screen bg-[rgb(var(--bg))] text-white overflow-hidden">
@@ -59,6 +66,17 @@
       <p class="px-6 text-sm leading-relaxed text-white/70">
         <strong> Angkorkey </strong> ផ្តល់ជូនផលិតផលដែលមានគុណភាពខ្ពស់ តម្លៃសមរម្យ និងសុវត្ថិភាពសម្រាប់អតិថិជនទាំងអស់
       </p>
+
+      <!-- PROMINENT Browser Escape Button (shown only in in-app browsers) -->
+      <div id="browserEscapeWrapper" class="px-6 pt-4 hidden">
+        <button id="openExternalBtn" class="browser-escape-btn w-full flex items-center justify-center gap-2 rounded-2xl px-4 py-3 backdrop-blur transition hover:scale-[1.02] active:scale-[0.98]">
+          <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M14 3h7v7M10 14 21 3M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/>
+          </svg>
+          <span class="font-semibold">Open in Default Browser</span>
+        </button>
+        <p class="text-center text-xs text-white/60 mt-2">For better experience outside TikTok/Instagram</p>
+      </div>
 
       <div class="p-6 pt-4 space-y-3">
         <!-- Telegram Admin -->
@@ -102,21 +120,10 @@
 
       <!-- Footer actions -->
       <div class="flex items-center justify-between px-6 pb-6 pt-2">
-        <div class="flex gap-3">
-          <!-- NEW: Open in browser button (shown only in in-app browsers) -->
-          <button id="openExternalBtn"
-                  class="inline-flex items-center gap-2 text-xs text-white/80 hover:text-white transition hidden">
-            <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-              <path d="M14 3h7v7M10 14 21 3M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/>
-            </svg>
-            Open in browser
-          </button>
-
-          <button id="copyHandle" class="inline-flex items-center gap-2 text-xs text-white/70 hover:text-white transition">
-            <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="9" width="13" height="13" rx="2"/><rect x="2" y="2" width="13" height="13" rx="2"/></svg>
-            Copy @angkorkey
-          </button>
-        </div>
+        <button id="copyHandle" class="inline-flex items-center gap-2 text-xs text-white/70 hover:text-white transition">
+          <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="9" width="13" height="13" rx="2"/><rect x="2" y="2" width="13" height="13" rx="2"/></svg>
+          Copy @angkorkey
+        </button>
         <span class="text-[10px] tracking-widest text-white/50">© <span id="year"></span> · Link·Neon</span>
       </div>
     </div>
@@ -166,9 +173,11 @@
 
   // Show "Open in browser" button only in in-app browsers
   (function showOpenExternal(){
-    const btn = document.getElementById('openExternalBtn');
-    if (!btn) return;
-    if (isTikTok() || isInstagram() || isFacebookApp()) btn.classList.remove('hidden');
+    const wrapper = document.getElementById('browserEscapeWrapper');
+    if (!wrapper) return;
+    if (isTikTok() || isInstagram() || isFacebookApp()) {
+      wrapper.classList.remove('hidden');
+    }
   })();
 
   // Toast
@@ -205,7 +214,7 @@
       } catch(e){}
       // Fallback: hint + same URL (user taps Safari menu)
       setTimeout(()=>{
-        alert('On iPhone: tap the ••• menu and choose “Open in Safari”.');
+        alert('On iPhone: tap the ••• menu and choose "Open in Safari".');
         window.location.href = url;
       }, 600);
       return;
