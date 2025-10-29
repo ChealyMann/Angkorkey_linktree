@@ -9,7 +9,9 @@
   <link rel="icon" href="img/logo.jpg">
   <style>
     :root { --neon: 255 99 247; --aqua: 34 211 238; --vio: 139 92 246; --bg: 2 6 23; }
+
     html { scroll-behavior: smooth }
+
     .halo::before{
       content:"";position:absolute;inset:-2px;z-index:-1;
       background:conic-gradient(from 0deg,rgba(var(--aqua),.7),rgba(var(--neon),.7),rgba(var(--vio),.7),rgba(var(--aqua),.7));
@@ -22,6 +24,8 @@
     .gridlines{background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:38px 38px;mask-image:radial-gradient(80% 60% at 50% 30%,#000 60%,transparent 100%);}
     @keyframes spin{to{transform:rotate(360deg)}}
     @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+    /* Toast */
     .toast{
       position:fixed;top:20px;left:50%;transform:translateX(-50%);
       background:rgba(34,211,238,.95);color:#000;padding:12px 24px;border-radius:12px;
@@ -54,7 +58,7 @@
       </p>
 
       <div class="p-6 pt-4 space-y-3">
-        <!-- Telegram Admin (username: Angkorkey_admin_2) -->
+        <!-- Telegram Admin -->
         <a class="external-link group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur transition hover:border-white/20 hover:bg-white/[.08]"
            href="https://t.me/Angkorkey_admin_2"
            data-url="https://t.me/Angkorkey_admin_2"
@@ -64,7 +68,7 @@
           <span class="text-[10px] uppercase tracking-widest text-white/60">Chat</span>
         </a>
 
-        <!-- Telegram Channel (username: angkorkey) -->
+        <!-- Telegram Channel -->
         <a class="external-link group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur transition hover:border-white/20 hover:bg-white/[.08]"
            href="https://t.me/angkorkey"
            data-url="https://t.me/angkorkey"
@@ -104,10 +108,31 @@
   </section>
 </main>
 
+<!-- TikTok in-app help overlay -->
+<div id="tt-help" class="fixed inset-0 z-[9999] hidden">
+  <div class="absolute inset-0 bg-black/60"></div>
+  <div class="absolute inset-x-4 bottom-6 rounded-2xl p-4 glass ring-1 ring-white/10 text-white">
+    <div class="flex items-start gap-3">
+      <div class="text-xl">🚪</div>
+      <div class="flex-1">
+        <div class="font-semibold mb-1">Open in Telegram</div>
+        <div class="text-white/80 text-sm mb-3">If TikTok blocks it, try one of these:</div>
+        <div class="grid grid-cols-2 gap-2">
+          <button id="tt-share" class="rounded-xl px-3 py-2 bg-white/10 hover:bg-white/20">Share → Telegram</button>
+          <button id="tt-browser" class="rounded-xl px-3 py-2 bg-white/10 hover:bg-white/20">Open in browser</button>
+          <button id="tt-copy" class="rounded-xl px-3 py-2 bg-white/10 hover:bg-white/20 col-span-2">Copy t.me link</button>
+        </div>
+      </div>
+      <button id="tt-close" class="text-white/70 hover:text-white">✕</button>
+    </div>
+  </div>
+</div>
+
 <script>
+  // Year
   document.getElementById('year').textContent = new Date().getFullYear();
 
-  // Copy functionality
+  // Copy handle
   document.getElementById('copyHandle').addEventListener('click', () => {
     navigator.clipboard.writeText('@angkorkey').then(() => {
       const btn = document.getElementById('copyHandle');
@@ -117,15 +142,12 @@
     });
   });
 
-  // Environment detection
-  function isTikTok() {
-    const ua = navigator.userAgent || navigator.vendor || window.opera;
-    return ua.includes('TikTok') || ua.includes('musical_ly') || ua.includes('Bytedance');
-  }
+  // Detection
+  function isTikTok(){ const ua = navigator.userAgent||navigator.vendor||window.opera; return /TikTok|musical_ly|Bytedance/i.test(ua); }
   function isAndroid(){ return /Android/i.test(navigator.userAgent); }
   function isiOS(){ return /iPhone|iPad|iPod/i.test(navigator.userAgent); }
 
-  // Toast
+  // Toast (optional hint)
   function showToast(message){
     const el = document.createElement('div');
     el.className = 'toast'; el.textContent = message; document.body.appendChild(el);
@@ -133,72 +155,106 @@
     setTimeout(()=>{ el.classList.remove('show'); setTimeout(()=>el.remove(),300); }, 3000);
   }
 
-  // Robust Telegram opener (prefers native app)
-  function openTelegram(username){
-    const tgUri = `tg://resolve?domain=${username}`;
-    const web = `https://t.me/${username}`;
-
-    if (isAndroid()){
-      // 1) Try native scheme
-      window.location.href = tgUri;
-
-      // 2) Fallback to Telegram package intent (most reliable inside TikTok)
-      setTimeout(() => {
-        window.location.href =
-                `intent://t.me/${username}#Intent;scheme=https;package=org.telegram.messenger;` +
-                `S.browser_fallback_url=${encodeURIComponent(web)};end;`;
-      }, 500);
-
-      // 3) Optional: try Telegram X (Challegram) if user has it
-      setTimeout(() => {
-        window.location.href =
-                `intent://t.me/${username}#Intent;scheme=https;package=org.thunderdog.challegram;` +
-                `S.browser_fallback_url=${encodeURIComponent(web)};end;`;
-      }, 1000);
-
-      // 4) Final fallback: open web (lets user tap "Open in Telegram")
-      setTimeout(() => { window.location.href = web; }, 1500);
-      return;
+  // Share sheet often jumps into Telegram
+  async function tryShareToTelegram(username){
+    const url = `https://t.me/${username}`;
+    if (navigator.share){
+      try { await navigator.share({ title: 'Open in Telegram', text: 'Open in Telegram:', url }); return true; }
+      catch(e){ /* cancelled or blocked */ }
     }
-
-    if (isiOS()){
-      // 1) Try native scheme
-      window.location.href = tgUri;
-
-      // 2) If blocked by in-app browser, open universal link (shows "Open in Telegram")
-      setTimeout(() => { window.location.href = web; }, 700);
-
-      // 3) Final fallback: App Store
-      setTimeout(() => { window.location.href = 'itms-apps://itunes.apple.com/app/id686449807'; }, 2000);
-
-      // Helpful hint specifically for in-app browsers
-      if (isTikTok()) showToast('If you see a prompt, choose "Open in Telegram"');
-      return;
-    }
-
-    // Desktop/others: try app, then web
-    window.location.href = tgUri;
-    setTimeout(() => { window.open(web, '_blank', 'noopener,noreferrer'); }, 800);
+    return false;
   }
 
-  // General external link handler
+  // Helper overlay for TikTok
+  function showTikTokHelp(username, web){
+    const $wrap = document.getElementById('tt-help');
+    if (!$wrap) return;
+    $wrap.classList.remove('hidden');
+
+    const $close = document.getElementById('tt-close');
+    const $share = document.getElementById('tt-share');
+    const $browser = document.getElementById('tt-browser');
+    const $copy = document.getElementById('tt-copy');
+
+    const hide = ()=> $wrap.classList.add('hidden');
+    $close.onclick = hide;
+
+    $share.onclick = async ()=>{
+      const ok = await tryShareToTelegram(username);
+      if (!ok) alert('Sharing not supported here. Try "Open in browser" or copy the link.');
+      hide();
+    };
+
+    $browser.onclick = ()=>{
+      if (isAndroid()){
+        const encoded = encodeURIComponent(web);
+        // Ask for Chrome specifically
+        window.location.href = `intent://${web.replace(/^https?:\/\//,'')}` +
+                `#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encoded};end;`;
+        setTimeout(()=>{ window.location.href = web; }, 800);
+      } else {
+        alert('Tap the ••• menu in the top-right and choose "Open in browser (Safari)".');
+        window.location.href = web;
+      }
+      hide();
+    };
+
+    $copy.onclick = async ()=>{
+      try { await navigator.clipboard.writeText(web); alert('Copied! Paste into Telegram.'); }
+      catch(e){ alert('Copy failed. Long-press the link and copy manually.'); }
+      hide();
+    };
+  }
+
+  // Open Telegram (prefer native app)
+  function openTelegram(username){
+    const web = `https://t.me/${username}`;
+    const tg = `tg://resolve?domain=${username}`;
+
+    // Try native scheme
+    try { window.location.href = tg; } catch(e){}
+
+    if (isAndroid()){
+      // Package-targeted intents (Telegram, then Telegram X)
+      setTimeout(()=>{ window.location.href =
+              `intent://t.me/${username}#Intent;scheme=https;package=org.telegram.messenger;S.browser_fallback_url=${encodeURIComponent(web)};end;`;
+      }, 400);
+
+      setTimeout(()=>{ window.location.href =
+              `intent://t.me/${username}#Intent;scheme=https;package=org.thunderdog.challegram;S.browser_fallback_url=${encodeURIComponent(web)};end;`;
+      }, 900);
+
+      // Final fallback: web (shows "Open in Telegram" button)
+      setTimeout(()=>{ window.location.href = web; }, 1500);
+    } else if (isiOS()){
+      // On iOS, tg:// then universal link; then App Store
+      setTimeout(()=>{ window.location.href = web; }, 700);
+      setTimeout(()=>{ window.location.href = 'itms-apps://itunes.apple.com/app/id686449807'; }, 2000);
+      if (isTikTok()) showToast('If prompted, choose "Open in Telegram".');
+    } else {
+      // Desktop/others
+      setTimeout(()=>{ window.open(web, '_blank', 'noopener,noreferrer'); }, 800);
+    }
+
+    if (isTikTok()){
+      showTikTokHelp(username, web);
+    }
+  }
+
+  // Generic external-link handler (Telegram + others)
   function handleLinkClick(e){
     e.preventDefault(); e.stopPropagation();
 
-    const anchor = this;
-    const url = anchor.getAttribute('data-url') || anchor.href;
+    const url = this.getAttribute('data-url') || this.href;
+    const m = url.match(/^https?:\/\/t\.me\/([A-Za-z0-9_]+)/i);
 
-    // If it's a Telegram link, force app open flows
-    const match = url.match(/^https?:\/\/t\.me\/([A-Za-z0-9_]+)/i);
-    if (match && match[1]){
-      openTelegram(match[1]);
+    if (m && m[1]){
+      openTelegram(m[1]);
       return;
     }
 
-    // Non-Telegram links:
-    // In TikTok in-app browser, try to kick to external browser; else open normally
+    // Non-Telegram: try to break out of TikTok to external browser on Android
     if (isTikTok() && isAndroid()){
-      // Try Chrome explicitly using intent (opens outside TikTok)
       const encoded = encodeURIComponent(url);
       window.location.href = `intent://${url.replace(/^https?:\/\//,'')}` +
               `#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encoded};end;`;
@@ -206,7 +262,6 @@
       return;
     }
 
-    // Default
     window.open(url, '_blank', 'noopener,noreferrer');
   }
 
