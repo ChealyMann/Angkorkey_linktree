@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Angkorkey</title>
+  <meta name="description" content="Futuristic link-in-bio page" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="img/logo.jpg">
+  <style>
+    :root {
+      --neon: 255 99 247; /* pink */
+      --aqua: 34 211 238; /* cyan */
+      --vio: 139 92 246; /* violet */
+      --bg: 2 6 23;       /* slate-950 */
+    }
+
+    /* Smoothy */
+    html { scroll-behavior: smooth }
+
+    /* Animated gradient halo */
+    .halo::before {
+      content: "";
+      position: absolute; inset: -2px; z-index: -1;
+      background: conic-gradient(from 0deg,
+        rgba(var(--aqua),.7), rgba(var(--neon),.7), rgba(var(--vio),.7), rgba(var(--aqua),.7));
+      filter: blur(18px) saturate(130%);
+      border-radius: 28px;
+      animation: spin 12s linear infinite;
+      mask: linear-gradient(#000, #000) content-box, linear-gradient(#000,#000);
+      -webkit-mask: linear-gradient(#000, #000) content-box, linear-gradient(#000,#000);
+      padding: 2px;
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      opacity: .45;
+    }
+
+    /* Glass panel */
+    .glass { background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02)); }
+    .gridlines { background-image: linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px); background-size: 38px 38px; mask-image: radial-gradient(80% 60% at 50% 30%, #000 60%, transparent 100%); }
+
+    @keyframes spin { to { transform: rotate(360deg) } }
+    @keyframes float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-6px) } }
+  </style>
+</head>
+<body class="relative min-h-screen bg-[rgb(var(--bg))] text-white overflow-hidden">
+  <!-- Particle canvas -->
+  <canvas id="bg" class="fixed inset-0 -z-10"></canvas>
+
+  <!-- Subtle grid overlay -->
+  <div class="pointer-events-none fixed inset-0 gridlines -z-10"></div>
+
+  <!-- Page -->
+  <main class="relative mx-auto max-w-md px-5 py-16 md:py-24">
+    <!-- Profile card -->
+    <section class="halo relative rounded-3xl p-[2px]">
+      <div class="glass rounded-3xl ring-1 ring-white/10 backdrop-blur-xl">
+        <!-- Header -->
+        <div class="flex items-center gap-4 p-6">
+          <!-- Avatar -->
+          <div class="relative">
+            <div class="absolute inset-0 rounded-full blur-xl opacity-70" style="background: radial-gradient(120px 120px at 50% 50%, rgba(var(--aqua),.6), transparent 60%)"></div>
+            <img src="img/logo.jpg" alt="Avatar" class="relative size-16 rounded-full ring-2 ring-white/30" />
+          </div>
+          <div class="min-w-0">
+            <h1 class="text-xl font-semibold tracking-tight">Angkorkey</h1>
+            <p class="text-white/70 text-sm">Social Media Links</p>
+          </div>
+<!--          <button id="themeToggle" class="ml-auto inline-flex items-center gap-2 rounded-xl border border-white/10 px-3 py-2 text-xs text-white/80 hover:text-white hover:border-white/20 transition">-->
+<!--            <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M5 19l1.5-1.5"/></svg>-->
+<!--            Theme-->
+<!--          </button>-->
+        </div>
+
+        <!-- Bio -->
+        <p class="px-6 text-sm leading-relaxed text-white/70">
+         <strong> Angkorkey </strong> ផ្តល់ជូនផលិតផលដែលមានគុណភាពខ្ពស់ តម្លៃសមរម្យ និងសុវត្ថិភាពសម្រាប់អតិថិជនទាំងអស់
+        </p>
+
+        <!-- Link buttons -->
+        <div class="p-6 pt-4 space-y-3">
+
+          <!-- Telegram -->
+          <a class="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur transition hover:border-white/20 hover:bg-white/[.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/40"
+             href="https://t.me/Angkorkey_admin_2" target="_blank" rel="noopener">
+            <svg class="size-5 opacity-80 group-hover:opacity-100" viewBox="0 0 24 24" fill="currentColor"><path d="M9.999 15.2 9.9 19c.4 0 .6-.2.8-.4l2-1.9 4.2 3.1c.8.4 1.3.2 1.5-.7l2.7-12.7c.3-1.2-.4-1.6-1.2-1.3L2.8 9.4c-1.1.4-1.1 1-.2 1.3l4.6 1.4 10.7-6.7-7.9 8.7Z"/></svg>
+            <span class="flex-1 truncate">t.me/angkorkey_admin_2</span>
+            <span class="text-[10px] uppercase tracking-widest text-white/60">Chat</span>
+          </a>
+
+          <!-- Telegram Channel -->
+          <a class="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur transition hover:border-white/20 hover:bg-white/[.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-300/40"
+             href="https://t.me/angkorkey" target="_blank" rel="noopener">
+            <svg class="size-5 opacity-80 group-hover:opacity-100" viewBox="0 0 24 24" fill="currentColor"><path d="M9.999 15.2 9.9 19c.4 0 .6-.2.8-.4l2-1.9 4.2 3.1c.8.4 1.3.2 1.5-.7l2.7-12.7c.3-1.2-.4-1.6-1.2-1.3L2.8 9.4c-1.1.4-1.1 1-.2 1.3l4.6 1.4 10.7-6.7-7.9 8.7Z"/></svg>
+            <span class="flex-1 truncate">t.me/angkorkey</span>
+            <span class="text-[10px] uppercase tracking-widest text-white/60">Join</span>
+          </a>
+
+          <!-- TikTok -->
+          <a class="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur transition hover:border-white/20 hover:bg-white/[.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-fuchsia-400/40"
+             href="https://www.tiktok.com/@angkorkey" target="_blank" rel="noopener">
+            <svg class="size-5 opacity-80 group-hover:opacity-100" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c.5 2.8 2.5 5 5.1 5.6v3.4c-1.7 0-3.2-.6-4.6-1.6v6.6c0 3-2.3 5.4-5.3 5.4S2 19 2 16s2.4-5.4 5.3-5.4c.3 0 .6 0 .9.1v3.3c-.3-.1-.6-.2-.9-.2-1.1 0-2 1-2 2.2s.9 2.2 2 2.2 2-1 2-2.2V2h2.7Z"/></svg>
+            <span class="flex-1 truncate">tiktok.com/@angkorkey</span>
+            <span class="text-[10px] uppercase tracking-widest text-white/60">Follow</span>
+          </a>
+
+          <!-- Facebook Page -->
+          <a class="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur transition hover:border-white/20 hover:bg-white/[.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/40"
+             href="https://web.facebook.com/profile.php?id=61550673305154&rdid=dnczySCXNe4mXke6&share_url=https%3A%2F%2Fweb.facebook.com%2Fshare%2F1AavZFcvxh%2F%3F_rdc%3D1%26_rdr#" target="_blank" rel="noopener">
+            <svg class="size-5 opacity-80 group-hover:opacity-100" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12A10 10 0 1 0 10.6 21.9v-6.5h-2v-3.4h2V9.4c0-2 1.2-3.2 3-3.2.9 0 1.8.2 1.8.2v2h-1c-1 0-1.3.6-1.3 1.2v1.9h2.3l-.4 3.4h-1.9v6.5A10 10 0 0 0 22 12Z"/></svg>
+            <span class="flex-1 truncate">facebook.com/Angkorkey</span>
+            <span class="text-[10px] uppercase tracking-widest text-white/60">Like</span>
+          </a>
+
+
+
+        </div>
+
+
+        <!-- Footer actions -->
+        <div class="flex items-center justify-between px-6 pb-6 pt-2">
+          <button id="copyHandle" class="inline-flex items-center gap-2 text-xs text-white/70 hover:text-white transition">
+            <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="9" width="13" height="13" rx="2"/><rect x="2" y="2" width="13" height="13" rx="2"/></svg>
+            Copy @yourhandle
+          </button>
+          <span class="text-[10px] tracking-widest text-white/50">© <span id="year"></span> · Link·Neon</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Credits / CTA -->
+<!--    <div class="mt-8 text-center text-xs text-white/50">-->
+<!--      Built with <span class="text-white/70">HTML</span>, <span class="text-white/70">Tailwind</span> & <span class="text-white/70">JS</span> · Customize the links & colors.-->
+<!--    </div>-->
+  </main>
+
+  <!-- Scripts -->
+  <script>
+    // ===== Starfield / particles =====
+    const canvas = document.getElementById('bg');
+    const ctx = canvas.getContext('2d');
+    let w, h, dpr, stars = [];
+
+    function resize() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = canvas.width = innerWidth * dpr;
+      h = canvas.height = innerHeight * dpr;
+      canvas.style.width = innerWidth + 'px';
+      canvas.style.height = innerHeight + 'px';
+      initStars();
+    }
+
+    function initStars() {
+      const count = Math.floor((innerWidth * innerHeight) / 9000);
+      stars = Array.from({ length: count }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        z: Math.random() * 0.6 + 0.4,
+        v: Math.random() * 0.2 + 0.05
+      }));
+    }
+
+    function tick() {
+      ctx.clearRect(0, 0, w, h);
+      for (const s of stars) {
+        s.x += s.v * 8; // drift
+        if (s.x > w) s.x = 0;
+        const size = s.z * 1.5;
+        ctx.globalAlpha = s.z * 0.7;
+        ctx.fillStyle = `rgb(${34 + s.z*80}, ${211 - s.z*40}, ${238})`;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      requestAnimationFrame(tick);
+    }
+
+    addEventListener('resize', resize);
+    resize();
+    tick();
+
+    // ===== Copy handle button =====
+    const copyBtn = document.getElementById('copyHandle');
+    copyBtn.addEventListener('click', async () => {
+      const handle = '@yourhandle';
+      try {
+        await navigator.clipboard.writeText(handle);
+        copyBtn.innerHTML = '<span class="text-emerald-300">Copied</span>';
+        setTimeout(() => (copyBtn.innerHTML = `\n          <svg class=\"size-4\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\"/><rect x=\"2\" y=\"2\" width=\"13\" height=\"13\" rx=\"2\"/></svg>\n          Copy @yourhandle\n        `), 1200);
+      } catch (e) {
+        alert('Copy failed');
+      }
+    });
+
+    // ===== Theme toggle (switch accent hues) =====
+    const toggle = document.getElementById('themeToggle');
+    let theme = 0;
+    const palettes = [
+      { neon: '255 99 247', aqua: '34 211 238', vio: '139 92 246' }, // cyan/pink/violet
+      { neon: '99 102 241', aqua: '16 185 129', vio: '244 114 182' }, // indigo/emerald/rose
+      { neon: '250 204 21', aqua: '59 130 246', vio: '236 72 153' }, // gold/blue/pink
+    ];
+
+    toggle.addEventListener('click', () => {
+      theme = (theme + 1) % palettes.length;
+      const p = palettes[theme];
+      document.documentElement.style.setProperty('--neon', p.neon);
+      document.documentElement.style.setProperty('--aqua', p.aqua);
+      document.documentElement.style.setProperty('--vio', p.vio);
+    });
+
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
