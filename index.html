@@ -3,73 +3,114 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b1220" />
   <title>Angkorkey</title>
   <meta name="description" content="Futuristic link-in-bio page" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="icon" href="img/logo.jpg">
   <style>
-    :root { --neon: 255 99 247; --aqua: 34 211 238; --vio: 139 92 246; --bg: 2 6 23; }
-    html { scroll-behavior: smooth }
+    :root{
+      --neon: 255 99 247;   /* pink */
+      --aqua: 34 211 238;   /* cyan */
+      --vio: 139 92 246;    /* violet */
+      --lime: 163 230 53;   /* lime */
+      --bg: 11 18 32;       /* deep slate */
+    }
 
-    .halo::before{
-      content:""; position:absolute; inset:-2px; z-index:-1;
-      background:conic-gradient(from 0deg, rgba(var(--aqua),.7), rgba(var(--neon),.7), rgba(var(--vio),.7), rgba(var(--aqua),.7));
-      filter:blur(18px) saturate(130%); border-radius:28px; animation:spin 12s linear infinite;
-      mask:linear-gradient(#000,#000) content-box,linear-gradient(#000,#000);
-      -webkit-mask:linear-gradient(#000,#000) content-box,linear-gradient(#000,#000);
-      padding:2px; -webkit-mask-composite:xor; mask-composite:exclude; opacity:.45;
-    }
-    .glass{ background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02)); }
+    html{ scroll-behavior:smooth }
+    body{ -webkit-tap-highlight-color: transparent }
+
+    /* ==== Decorative gridlines (masked so edges fade) ==== */
     .gridlines{
-      background-image:linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px);
-      background-size:38px 38px; mask-image:radial-gradient(80% 60% at 50% 30%, #000 60%, transparent 100%);
+      background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);
+      background-size:38px 38px;
+      mask-image:radial-gradient(80% 60% at 50% 32%, #000 60%, transparent 100%);
+      -webkit-mask-image:radial-gradient(80% 60% at 50% 32%, #000 60%, transparent 100%);
     }
-    @keyframes spin{ to{ transform:rotate(360deg) } }
-    @keyframes float{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-6px) } }
-    @keyframes pulse-glow{ 0%,100%{ opacity:.6 } 50%{ opacity:1 } }
+
+    /* ==== Glass card with neon halo ==== */
+    .halo{ position:relative }
+    .halo::before{
+      content:""; position:absolute; inset:-2px; z-index:-1; border-radius:28px; padding:2px;
+      background:conic-gradient(from 0deg, rgba(var(--aqua),.7), rgba(var(--neon),.7), rgba(var(--vio),.7), rgba(var(--aqua),.7));
+      filter:blur(16px) saturate(130%);
+      mask:linear-gradient(#000,#000) content-box, linear-gradient(#000,#000);
+      -webkit-mask:linear-gradient(#000,#000) content-box, linear-gradient(#000,#000);
+      -webkit-mask-composite:xor; mask-composite:exclude; opacity:.45; animation:spin 12s linear infinite;
+    }
+    .glass{ background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02)); }
+
+    /* ==== Buttons / links micro‑interaction helpers ==== */
+    .magnetic{ perspective:600px; transform-style:preserve-3d }
+    .tilt{ will-change:transform; transition:transform .15s ease, box-shadow .25s ease; }
+    .tilt:active{ transform:scale(.98) }
+
+    .neon-border{ position:relative }
+    .neon-border::after{
+      content:""; position:absolute; inset:0; border-radius:18px; pointer-events:none;
+      background:linear-gradient(135deg, rgba(var(--aqua),.25), rgba(var(--neon),.25));
+      box-shadow:0 0 0 1px rgba(255,255,255,.08) inset, 0 0 22px rgba(var(--aqua),.15);
+      opacity:.8; transition:opacity .25s ease, box-shadow .25s ease;
+    }
+    .neon-border:hover::after{ opacity:1; box-shadow:0 0 0 1px rgba(255,255,255,.14) inset, 0 10px 28px rgba(var(--neon),.22) }
+
+    /* Ripple (mobile tap feedback) */
+    .ripple{ position:relative; overflow:hidden }
+    .ripple > .wave{ position:absolute; border-radius:999px; transform:translate(-50%,-50%); pointer-events:none; opacity:.65; animation:ripple .6s ease-out forwards }
 
     /* Toast */
-    .toast{
-      position:fixed; top:20px; left:50%; transform:translateX(-50%);
-      background:rgba(34,211,238,.95); color:#000; padding:12px 24px; border-radius:12px;
-      font-size:14px; font-weight:600; z-index:9999; opacity:0; transition:opacity .3s;
-      box-shadow:0 4px 20px rgba(34,211,238,.4);
-    }
+    .toast{ position:fixed; top:18px; left:50%; transform:translateX(-50%); z-index:9999; padding:10px 18px; border-radius:999px; font-weight:600; font-size:13px; color:#001;
+      background:linear-gradient(90deg, rgba(var(--aqua),.95), rgba(var(--neon),.95)); box-shadow:0 8px 28px rgba(34,211,238,.35); opacity:0; transition:opacity .2s }
     .toast.show{ opacity:1 }
 
-    .browser-escape-btn{
-      background:linear-gradient(135deg, rgba(var(--aqua),.2), rgba(var(--neon),.2));
-      border:1px solid rgba(var(--aqua),.4);
-      animation:pulse-glow 2s ease-in-out infinite;
+    /* Animated gradients & badges */
+    .grad-text{ background:linear-gradient(90deg, rgb(var(--aqua)), rgb(var(--neon)), rgb(var(--vio))); -webkit-background-clip:text; background-clip:text; color:transparent; filter:drop-shadow(0 2px 10px rgba(255,255,255,.06)) }
+    .pill{ background:linear-gradient(135deg, rgba(var(--aqua),.25), rgba(var(--vio),.25)); border:1px solid rgba(255,255,255,.12) }
+
+    /* Keyframes */
+    @keyframes spin{ to{ transform:rotate(360deg) } }
+    @keyframes float{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-6px) } }
+    @keyframes ripple{ from{ width:0; height:0; opacity:.5; background:radial-gradient(circle at center, rgba(255,255,255,.7) 0%, rgba(255,255,255,.2) 60%, transparent 70%) } to{ width:400px; height:400px; opacity:0; background:radial-gradient(circle at center, rgba(255,255,255,.25) 0%, rgba(255,255,255,.05) 60%, transparent 70%) } }
+
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      .halo::before{ animation:none }
+      .tilt{ transition:none }
     }
   </style>
 </head>
-<body class="relative min-h-screen bg-[rgb(var(--bg))] text-white overflow-hidden">
+<body class="relative min-h-screen bg-[rgb(var(--bg))] text-white overflow-x-hidden">
+<!-- Background particles -->
 <canvas id="bg" class="fixed inset-0 -z-10"></canvas>
 <div class="pointer-events-none fixed inset-0 gridlines -z-10"></div>
 
-<main class="relative mx-auto max-w-md px-5 py-16 md:py-24">
-  <section class="halo relative rounded-3xl p-[2px]">
+<main class="relative mx-auto max-w-md px-5 py-16 md:py-20">
+  <!-- Header / brand card -->
+  <section class="halo rounded-3xl p-[2px]">
     <div class="glass rounded-3xl ring-1 ring-white/10 backdrop-blur-xl">
       <div class="flex items-center gap-4 p-6">
         <div class="relative">
           <div class="absolute inset-0 rounded-full blur-xl opacity-70" style="background: radial-gradient(120px 120px at 50% 50%, rgba(var(--aqua),.6), transparent 60%)"></div>
-          <img src="img/logo.jpg" alt="Avatar" class="relative size-16 rounded-full ring-2 ring-white/30" />
+          <img src="img/logo.jpg" alt="Angkorkey Logo" class="relative size-16 rounded-full ring-2 ring-white/30" />
         </div>
         <div class="min-w-0">
-          <h1 class="text-xl font-semibold tracking-tight">Angkorkey</h1>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xl font-bold tracking-tight grad-text">Angkorkey</h1>
+<!--            <span class="pill text-[10px] px-2 py-0.5 rounded-full uppercase tracking-widest text-white/80">Neo</span>-->
+          </div>
           <p class="text-white/70 text-sm">Social Media Links</p>
         </div>
       </div>
 
-      <p class="px-6 text-sm leading-relaxed text-white/70">
-        <strong> Angkorkey </strong> ផ្តល់ជូនផលិតផលដែលមានគុណភាពខ្ពស់ តម្លៃសមរម្យ និងសុវត្ថិភាពសម្រាប់អតិថិជនទាំងអស់
+      <p class="px-6 -mt-2 text-sm leading-relaxed text-white/80">
+        <strong> Angkorkey </strong>
+        ផ្តល់ជូនផលិតផលដែលមានគុណភាពខ្ពស់ តម្លៃសមរម្យ និងសុវត្ថិភាពសម្រាប់អតិថិជនទាំងអស់
       </p>
 
-      <!-- PROMINENT Browser Escape Button (shown only in in-app browsers) -->
+      <!-- In‑app browsers: show escape button -->
       <div id="browserEscapeWrapper" class="px-6 pt-4 hidden">
-        <button id="openExternalBtn" class="browser-escape-btn w-full flex items-center justify-center gap-2 rounded-2xl px-4 py-3 backdrop-blur transition hover:scale-[1.02] active:scale-[0.98]">
+        <button id="openExternalBtn" class="magnetic tilt neon-border w-full flex items-center justify-center gap-2 rounded-2xl px-4 py-3 backdrop-blur">
           <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M14 3h7v7M10 14 21 3M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/>
           </svg>
@@ -78,40 +119,41 @@
         <p class="text-center text-xs text-white/60 mt-2">For better experience outside TikTok/Instagram</p>
       </div>
 
+      <!-- Link list -->
       <div class="p-6 pt-4 space-y-3">
         <!-- Telegram Admin -->
-        <a class="external-link group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur transition hover:border-white/20 hover:bg-white/[.08]"
+        <a class="external-link ripple magnetic tilt neon-border group flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 backdrop-blur focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/40"
            href="https://t.me/Angkorkey_admin_2"
            data-url="https://t.me/Angkorkey_admin_2"
-           data-telegram-username="Angkorkey_admin_2">
+           data-telegram-username="Angkorkey_admin_2" aria-label="Open Telegram Admin">
           <svg class="size-5 opacity-80 group-hover:opacity-100" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.999 15.2 9.9 19c.4 0 .6-.2.8-.4l2-1.9 4.2 3.1c.8.4 1.3.2 1.5-.7l2.7-12.7c.3-1.2-.4-1.6-1.2-1.3L2.8 9.4c-1.1.4-1.1 1-.2 1.3l4.6 1.4 10.7-6.7-7.9 8.7Z"/></svg>
           <span class="flex-1 truncate">t.me/angkorkey_admin_2</span>
           <span class="text-[10px] uppercase tracking-widest text-white/60">Chat</span>
         </a>
 
         <!-- Telegram Channel -->
-        <a class="external-link group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur transition hover:border-white/20 hover:bg-white/[.08]"
+        <a class="external-link ripple magnetic tilt neon-border group flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 backdrop-blur focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/40"
            href="https://t.me/angkorkey"
            data-url="https://t.me/angkorkey"
-           data-telegram-username="angkorkey">
+           data-telegram-username="angkorkey" aria-label="Open Telegram Channel">
           <svg class="size-5 opacity-80 group-hover:opacity-100" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.999 15.2 9.9 19c.4 0 .6-.2.8-.4l2-1.9 4.2 3.1c.8.4 1.3.2 1.5-.7l2.7-12.7c.3-1.2-.4-1.6-1.2-1.3L2.8 9.4c-1.1.4-1.1 1-.2 1.3l4.6 1.4 10.7-6.7-7.9 8.7Z"/></svg>
           <span class="flex-1 truncate">t.me/angkorkey</span>
           <span class="text-[10px] uppercase tracking-widest text-white/60">Join</span>
         </a>
 
         <!-- TikTok -->
-        <a class="external-link group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur transition hover:border-white/20 hover:bg-white/[.08]"
+        <a class="external-link ripple magnetic tilt neon-border group flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 backdrop-blur focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/40"
            href="https://www.tiktok.com/@angkorkey"
-           data-url="https://www.tiktok.com/@angkorkey">
+           data-url="https://www.tiktok.com/@angkorkey" aria-label="Open TikTok">
           <svg class="size-5 opacity-80 group-hover:opacity-100" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c.5 2.8 2.5 5 5.1 5.6v3.4c-1.7 0-3.2-.6-4.6-1.6v6.6c0 3-2.3 5.4-5.3 5.4S2 19 2 16s2.4-5.4 5.3-5.4c.3 0 .6 0 .9.1v3.3c-.3-.1-.6-.2-.9-.2-1.1 0-2 1-2 2.2s.9 2.2 2 2.2 2-1 2-2.2V2h2.7Z"/></svg>
           <span class="flex-1 truncate">tiktok.com/@angkorkey</span>
           <span class="text-[10px] uppercase tracking-widest text-white/60">Follow</span>
         </a>
 
         <!-- Facebook -->
-        <a class="external-link group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur transition hover:border-white/20 hover:bg-white/[.08]"
+        <a class="external-link ripple magnetic tilt neon-border group flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 backdrop-blur focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/40"
            href="https://www.facebook.com/profile.php?id=61550673305154"
-           data-url="https://www.facebook.com/profile.php?id=61550673305154">
+           data-url="https://www.facebook.com/profile.php?id=61550673305154" aria-label="Open Facebook">
           <svg class="size-5 opacity-80 group-hover:opacity-100" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12A10 10 0 1 0 10.6 21.9v-6.5h-2v-3.4h2V9.4c0-2 1.2-3.2 3-3.2.9 0 1.8.2 1.8.2v2h-1c-1 0-1.3.6-1.3 1.2v1.9h2.3l-.4 3.4h-1.9v6.5A10 10 0 0 0 22 12Z"/></svg>
           <span class="flex-1 truncate">facebook.com/Angkorkey</span>
           <span class="text-[10px] uppercase tracking-widest text-white/60">Like</span>
@@ -124,13 +166,13 @@
           <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="9" width="13" height="13" rx="2"/><rect x="2" y="2" width="13" height="13" rx="2"/></svg>
           Copy @angkorkey
         </button>
-        <span class="text-[10px] tracking-widest text-white/50">© <span id="year"></span> · Link·Neon</span>
+<!--        <span class="text-[10px] tracking-widest text-white/50">© <span id="year"></span> · Link·Neon</span>-->
       </div>
     </div>
   </section>
 </main>
 
-<!-- TikTok in-app help overlay -->
+<!-- TikTok in‑app help overlay -->
 <div id="tt-help" class="fixed inset-0 z-[9999] hidden">
   <div class="absolute inset-0 bg-black/60"></div>
   <div class="absolute inset-x-4 bottom-6 rounded-2xl p-4 glass ring-1 ring-white/10 text-white">
@@ -150,193 +192,212 @@
   </div>
 </div>
 
-<script>
-  // Year
-  document.getElementById('year').textContent = new Date().getFullYear();
-
-  // Copy handle
-  document.getElementById('copyHandle').addEventListener('click', () => {
-    navigator.clipboard.writeText('@angkorkey').then(() => {
-      const btn = document.getElementById('copyHandle');
-      const original = btn.innerHTML;
-      btn.innerHTML = '<svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg>Copied!';
-      setTimeout(() => btn.innerHTML = original, 2000);
-    });
+<script defer>
+  /* ===== Year ===== */
+  document.addEventListener('DOMContentLoaded', ()=>{
+    const y = document.getElementById('year'); if (y) y.textContent = new Date().getFullYear();
   });
 
-  /* ---------- Environment detection ---------- */
-  function isAndroid(){ return /Android/i.test(navigator.userAgent); }
-  function isiOS(){ return /iPhone|iPad|iPod/i.test(navigator.userAgent); }
-  function isTikTok(){ return /TikTok|musical_ly|Bytedance/i.test(navigator.userAgent); }
-  function isInstagram(){ return /Instagram/i.test(navigator.userAgent); }
-  function isFacebookApp(){ return /FBAN|FB_IAB|FBAV/i.test(navigator.userAgent); }
-
-  // Show "Open in browser" button only in in-app browsers
-  (function showOpenExternal(){
-    const wrapper = document.getElementById('browserEscapeWrapper');
-    if (!wrapper) return;
-    if (isTikTok() || isInstagram() || isFacebookApp()) {
-      wrapper.classList.remove('hidden');
-    }
+  /* ===== Copy handle + toast ===== */
+  function showToast(message){
+    const el = document.createElement('div'); el.className='toast'; el.textContent=message; document.body.appendChild(el);
+    requestAnimationFrame(()=> el.classList.add('show'));
+    setTimeout(()=>{ el.classList.remove('show'); setTimeout(()=> el.remove(), 220); }, 2300);
+  }
+  (function setupCopy(){
+    const btn = document.getElementById('copyHandle'); if(!btn) return;
+    btn.addEventListener('click', ()=>{
+      navigator.clipboard.writeText('@angkorkey').then(()=>{
+        btn.classList.add('text-white'); showToast('Copied @angkorkey'); if (navigator.vibrate) navigator.vibrate(8);
+      });
+    });
   })();
 
-  // Toast
-  function showToast(message){
-    const el = document.createElement('div');
-    el.className = 'toast';
-    el.textContent = message;
-    document.body.appendChild(el);
-    setTimeout(()=>el.classList.add('show'),100);
-    setTimeout(()=>{ el.classList.remove('show'); setTimeout(()=>el.remove(),300); }, 3000);
-  }
+  /* ===== Env detection ===== */
+  function isAndroid(){ return /Android/i.test(navigator.userAgent) }
+  function isiOS(){ return /iPhone|iPad|iPod/i.test(navigator.userAgent) }
+  function isTikTok(){ return /TikTok|musical_ly|Bytedance/i.test(navigator.userAgent) }
+  function isInstagram(){ return /Instagram/i.test(navigator.userAgent) }
+  function isFacebookApp(){ return /FBAN|FB_IAB|FBAV/i.test(navigator.userAgent) }
 
-  /* ---------- Open current page in a real browser ---------- */
+  /* Show escape button if inside in-app browsers */
+  (function showOpenExternal(){
+    const wrapper = document.getElementById('browserEscapeWrapper'); if(!wrapper) return;
+    if (isTikTok() || isInstagram() || isFacebookApp()) wrapper.classList.remove('hidden');
+  })();
+
+  /* ===== Open in real browser (break out of webviews) ===== */
   function openInRealBrowser(url){
     url = url || window.location.href;
-
     if (isAndroid()){
       const encoded = encodeURIComponent(url);
-      // Kick to Chrome outside the webview
-      window.location.href =
-              `intent://${url.replace(/^https?:\/\//,'')}` +
+      window.location.href = `intent://${url.replace(/^https?:\/\//,'')}`+
               `#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encoded};end;`;
-      setTimeout(()=>{ window.location.href = url; }, 900);
+      setTimeout(()=>{ window.location.href = url }, 900);
       return;
     }
-
     if (isiOS()){
-      // Try Chrome scheme if available
-      try {
-        const chromeURL = url.startsWith('https://')
-                ? url.replace(/^https:\/\//,'googlechromes://')
-                : url.replace(/^http:\/\//,'googlechrome://');
+      try{
+        const chromeURL = url.startsWith('https://') ? url.replace(/^https:\/\//,'googlechromes://') : url.replace(/^http:\/\//,'googlechrome://');
         window.location.href = chromeURL;
-      } catch(e){}
-      // Fallback: hint + same URL (user taps Safari menu)
-      setTimeout(()=>{
-        alert('On iPhone: tap the ••• menu and choose "Open in Safari".');
-        window.location.href = url;
-      }, 600);
+      }catch(e){}
+      setTimeout(()=>{ alert('On iPhone: tap the ••• menu and choose "Open in Safari".'); window.location.href = url; }, 600);
       return;
     }
-
     window.open(url, '_blank', 'noopener,noreferrer');
   }
+  (function bindOpenExternal(){
+    const btn = document.getElementById('openExternalBtn'); if(!btn) return;
+    const fire = e=>{ e.preventDefault(); e.stopPropagation(); openInRealBrowser(); };
+    btn.addEventListener('click', fire, true); btn.addEventListener('touchend', fire, true);
+  })();
 
-  const openBtn = document.getElementById('openExternalBtn');
-  if (openBtn){
-    const fire = (e)=>{ e.preventDefault(); e.stopPropagation(); openInRealBrowser(); };
-    openBtn.addEventListener('click', fire, true);
-    openBtn.addEventListener('touchend', fire, true);
+  /* ===== Ripple (mobile tap effect) ===== */
+  function attachRipples(){
+    document.querySelectorAll('.ripple').forEach(el=>{
+      el.addEventListener('pointerdown', (e)=>{
+        const wave = document.createElement('span'); wave.className='wave';
+        const r = Math.max(el.clientWidth, el.clientHeight);
+        wave.style.left = e.offsetX+'px'; wave.style.top = e.offsetY+'px'; wave.style.width = wave.style.height = r+'px';
+        el.appendChild(wave); setTimeout(()=> wave.remove(), 600);
+      });
+    });
   }
 
-  /* ---------- Telegram helpers ---------- */
+  /* ===== Magnetic tilt (subtle 3D on hover / move) ===== */
+  function attachMagnetics(){
+    const cards = document.querySelectorAll('.magnetic .tilt');
+    const items = document.querySelectorAll('.magnetic');
+    items.forEach(item=>{
+      const card = item.classList.contains('tilt') ? item : item.querySelector('.tilt') || item;
+      let rect;
+      function move(e){
+        rect = rect || item.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width; // 0..1
+        const y = (e.clientY - rect.top) / rect.height;
+        const rx = (0.5 - y) * 8; // rotateX
+        const ry = (x - 0.5) * 8; // rotateY
+        card.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) translateZ(0)`;
+      }
+      function leave(){ rect=null; card.style.transform='rotateX(0) rotateY(0) translateZ(0)' }
+      item.addEventListener('pointermove', move);
+      item.addEventListener('pointerleave', leave);
+    });
+  }
+
+  /* ===== Telegram helpers ===== */
   async function tryShareToTelegram(username){
     const url = `https://t.me/${username}`;
     if (navigator.share){
-      try { await navigator.share({ title: 'Open in Telegram', text: 'Open in Telegram:', url }); return true; }
-      catch(e){ /* user cancelled */ }
+      try{ await navigator.share({ title:'Open in Telegram', text:'Open in Telegram:', url }); return true }catch(e){}
     }
     return false;
   }
-
   function showTikTokHelp(username, web){
-    const wrap = document.getElementById('tt-help');
-    if (!wrap) return;
-    wrap.classList.remove('hidden');
-
-    const close = document.getElementById('tt-close');
-    const share = document.getElementById('tt-share');
-    const browser = document.getElementById('tt-browser');
-    const copy = document.getElementById('tt-copy');
-
-    const hide = ()=> wrap.classList.add('hidden');
-    close.onclick = hide;
-
-    share.onclick = async ()=>{
-      const ok = await tryShareToTelegram(username);
-      if (!ok) alert('Sharing not supported here. Try "Open in browser" or copy the link.');
-      hide();
-    };
-
-    browser.onclick = ()=>{
-      if (isAndroid()){
-        const encoded = encodeURIComponent(web);
-        window.location.href = `intent://${web.replace(/^https?:\/\//,'')}` +
-                `#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encoded};end;`;
-        setTimeout(()=>{ window.location.href = web; }, 800);
-      } else {
-        alert('Tap the ••• menu and choose "Open in browser (Safari)".');
-        window.location.href = web;
-      }
-      hide();
-    };
-
-    copy.onclick = async ()=>{
-      try { await navigator.clipboard.writeText(web); alert('Copied! Paste into Telegram.'); }
-      catch(e){ alert('Copy failed. Long-press the link and copy manually.'); }
-      hide();
-    };
+    const wrap = document.getElementById('tt-help'); if(!wrap) return; wrap.classList.remove('hidden');
+    const close = document.getElementById('tt-close'); const share = document.getElementById('tt-share'); const browser = document.getElementById('tt-browser'); const copy = document.getElementById('tt-copy');
+    const hide = ()=> wrap.classList.add('hidden'); close.onclick = hide;
+    share.onclick = async ()=>{ const ok = await tryShareToTelegram(username); if(!ok) alert('Sharing not supported. Try "Open in browser" or copy the link.'); hide(); };
+    browser.onclick = ()=>{ if (isAndroid()){ const encoded = encodeURIComponent(web); window.location.href = `intent://${web.replace(/^https?:\/\//,'')}`+`#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encoded};end;`; setTimeout(()=>{ window.location.href = web }, 800);} else { alert('Tap the ••• menu and choose "Open in browser (Safari)".'); window.location.href = web } hide() };
+    copy.onclick = async ()=>{ try{ await navigator.clipboard.writeText(web); alert('Copied! Paste into Telegram.') }catch(e){ alert('Copy failed. Long-press the link and copy manually.') } hide() };
   }
-
   function openTelegram(username){
-    const web = `https://t.me/${username}`;
-    const tg = `tg://resolve?domain=${username}`;
-
-    // Try native scheme first
-    try { window.location.href = tg; } catch(e){}
-
+    const web = `https://t.me/${username}`; const tg = `tg://resolve?domain=${username}`;
+    try{ window.location.href = tg }catch(e){}
     if (isAndroid()){
-      // Target Telegram package, then Telegram X
-      setTimeout(()=>{ window.location.href =
-              `intent://t.me/${username}#Intent;scheme=https;package=org.telegram.messenger;S.browser_fallback_url=${encodeURIComponent(web)};end;`;
-      }, 400);
-
-      setTimeout(()=>{ window.location.href =
-              `intent://t.me/${username}#Intent;scheme=https;package=org.thunderdog.challegram;S.browser_fallback_url=${encodeURIComponent(web)};end;`;
-      }, 900);
-
-      setTimeout(()=>{ window.location.href = web; }, 1500);
+      setTimeout(()=>{ window.location.href = `intent://t.me/${username}#Intent;scheme=https;package=org.telegram.messenger;S.browser_fallback_url=${encodeURIComponent(web)};end;` }, 400);
+      setTimeout(()=>{ window.location.href = `intent://t.me/${username}#Intent;scheme=https;package=org.thunderdog.challegram;S.browser_fallback_url=${encodeURIComponent(web)};end;` }, 900);
+      setTimeout(()=>{ window.location.href = web }, 1500);
     } else if (isiOS()){
-      setTimeout(()=>{ window.location.href = web; }, 700);
-      setTimeout(()=>{ window.location.href = 'itms-apps://itunes.apple.com/app/id686449807'; }, 2000);
+      setTimeout(()=>{ window.location.href = web }, 700);
+      setTimeout(()=>{ window.location.href = 'itms-apps://itunes.apple.com/app/id686449807' }, 2000);
       if (isTikTok()) showToast('If prompted, choose "Open in Telegram".');
     } else {
-      setTimeout(()=>{ window.open(web, '_blank', 'noopener,noreferrer'); }, 800);
+      setTimeout(()=>{ window.open(web, '_blank', 'noopener,noreferrer') }, 800);
     }
-
     if (isTikTok()) showTikTokHelp(username, web);
   }
 
-  /* ---------- Generic external link handler ---------- */
+  /* ===== Generic external link handler ===== */
   function handleLinkClick(e){
-    e.preventDefault(); e.stopPropagation();
-
+    e.preventDefault(); e.stopPropagation(); if (navigator.vibrate) navigator.vibrate(8);
     const url = this.getAttribute('data-url') || this.href;
     const m = url.match(/^https?:\/\/t\.me\/([A-Za-z0-9_]+)/i);
-
-    if (m && m[1]){
-      openTelegram(m[1]);
-      return;
-    }
-
-    // Non-Telegram links: try to break out of TikTok on Android
+    if (m && m[1]){ openTelegram(m[1]); return }
     if (isTikTok() && isAndroid()){
       const encoded = encodeURIComponent(url);
-      window.location.href = `intent://${url.replace(/^https?:\/\//,'')}` +
-              `#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encoded};end;`;
-      setTimeout(()=>{ window.location.href = url; }, 800);
-      return;
+      window.location.href = `intent://${url.replace(/^https?:\/\//,'')}`+`#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encoded};end;`;
+      setTimeout(()=>{ window.location.href = url }, 800); return;
     }
-
     window.open(url, '_blank', 'noopener,noreferrer');
   }
 
-  document.querySelectorAll('.external-link').forEach(link => {
-    link.addEventListener('click', handleLinkClick, true);
-    link.addEventListener('touchend', handleLinkClick, true);
-  });
+  (function bindLinks(){
+    document.querySelectorAll('.external-link').forEach(link=>{
+      link.addEventListener('click', handleLinkClick, true);
+      link.addEventListener('touchend', handleLinkClick, true);
+    });
+  })();
 
+  /* ===== Scroll reveal ===== */
+  (function revealOnScroll(){
+    const els = document.querySelectorAll('.external-link');
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if (entry.isIntersecting){ entry.target.style.transition='transform .45s cubic-bezier(.2,.8,.2,1), opacity .45s'; entry.target.style.transform='translateY(0) scale(1)'; entry.target.style.opacity='1'; io.unobserve(entry.target) }
+      });
+    }, { threshold:.12 });
+    els.forEach((el,i)=>{ el.style.opacity='0'; el.style.transform='translateY(12px) scale(.98)'; setTimeout(()=> io.observe(el), 80*i) });
+  })();
+
+  /* ===== Background particles (mobile‑friendly) ===== */
+  (function bgParticles(){
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; if (reduce) return;
+    const c = document.getElementById('bg'); if(!c) return; const ctx = c.getContext('2d');
+    let w, h, dpr = Math.min(window.devicePixelRatio || 1, 2);
+    function resize(){ w = c.width = Math.floor(innerWidth * dpr); h = c.height = Math.floor(innerHeight * dpr); c.style.width = innerWidth+'px'; c.style.height = innerHeight+'px'; }
+    resize(); addEventListener('resize', resize);
+
+    const COUNT = Math.max(40, Math.min(90, Math.floor(innerWidth/8)));
+    const pts = Array.from({length: COUNT}, ()=>({
+      x: Math.random()*w, y: Math.random()*h,
+      vx: (Math.random()-.5)*0.25*dpr, vy: (Math.random()-.5)*0.25*dpr,
+      r: (Math.random()*1.2+0.4)*dpr
+    }));
+    let mouse = { x: w/2, y: h/3 };
+    window.addEventListener('pointermove', e=>{ mouse.x = e.clientX*dpr; mouse.y = e.clientY*dpr }, { passive:true });
+
+    function tick(){
+      ctx.clearRect(0,0,w,h);
+      // glow backdrop
+      const g = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, Math.max(w,h)*.5);
+      g.addColorStop(0, `rgba(${getComputedStyle(document.documentElement).getPropertyValue('--aqua')}, .08)`);
+      g.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
+
+      // points
+      for (let i=0;i<pts.length;i++){
+        const p = pts[i]; p.x+=p.vx; p.y+=p.vy;
+        if (p.x<0||p.x>w) p.vx*=-1; if (p.y<0||p.y>h) p.vy*=-1;
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fillStyle = 'rgba(255,255,255,.55)'; ctx.fill();
+      }
+      // links
+      for (let i=0;i<pts.length;i++){
+        for (let j=i+1;j<pts.length;j++){
+          const a=pts[i], b=pts[j]; const dx=a.x-b.x, dy=a.y-b.y; const dist = Math.hypot(dx,dy);
+          if (dist<90*dpr){ ctx.strokeStyle = `rgba(139,92,246, ${.08 - dist/(90*dpr)*.08})`; ctx.lineWidth = .8*dpr; ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke(); }
+        }
+      }
+      requestAnimationFrame(tick);
+    }
+    tick();
+  })();
+
+  /* ===== Init interactions ===== */
+  document.addEventListener('DOMContentLoaded', ()=>{ attachRipples(); attachMagnetics(); });
+
+  // Debug UA (optional)
   console.log('TikTok:', isTikTok(), 'Android:', isAndroid(), 'iOS:', isiOS());
 </script>
 </body>
