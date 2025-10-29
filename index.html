@@ -23,7 +23,7 @@
       content: "";
       position: absolute; inset: -2px; z-index: -1;
       background: conic-gradient(from 0deg,
-        rgba(var(--aqua),.7), rgba(var(--neon),.7), rgba(var(--vio),.7), rgba(var(--aqua),.7));
+      rgba(var(--aqua),.7), rgba(var(--neon),.7), rgba(var(--vio),.7), rgba(var(--aqua),.7));
       filter: blur(18px) saturate(130%);
       border-radius: 28px;
       animation: spin 12s linear infinite;
@@ -31,7 +31,7 @@
       -webkit-mask: linear-gradient(#000, #000) content-box, linear-gradient(#000,#000);
       padding: 2px;
       -webkit-mask-composite: xor;
-              mask-composite: exclude;
+      mask-composite: exclude;
       opacity: .45;
     }
 
@@ -44,143 +44,160 @@
   </style>
 </head>
 <body class="relative min-h-screen bg-[rgb(var(--bg))] text-white overflow-hidden">
-  <!-- Particle canvas -->
-  <canvas id="bg" class="fixed inset-0 -z-10"></canvas>
+<!-- Particle canvas -->
+<canvas id="bg" class="fixed inset-0 -z-10"></canvas>
 
-  <!-- Subtle grid overlay -->
-  <div class="pointer-events-none fixed inset-0 gridlines -z-10"></div>
+<!-- Subtle grid overlay -->
+<div class="pointer-events-none fixed inset-0 gridlines -z-10"></div>
 
-  <!-- Page -->
-  <main class="relative mx-auto max-w-md px-5 py-16 md:py-24">
-    <!-- Profile card -->
-    <section class="halo relative rounded-3xl p-[2px]">
-      <div class="glass rounded-3xl ring-1 ring-white/10 backdrop-blur-xl">
-        <!-- Header -->
-        <div class="flex items-center gap-4 p-6">
-          <!-- Avatar -->
-          <div class="relative">
-            <div class="absolute inset-0 rounded-full blur-xl opacity-70" style="background: radial-gradient(120px 120px at 50% 50%, rgba(var(--aqua),.6), transparent 60%)"></div>
-            <img src="img/logo.jpg" alt="Avatar" class="relative size-16 rounded-full ring-2 ring-white/30" />
-          </div>
-          <div class="min-w-0">
-            <h1 class="text-xl font-semibold tracking-tight">Angkorkey</h1>
-            <p class="text-white/70 text-sm">Social Media Links</p>
-          </div>
-<!--          <button id="themeToggle" class="ml-auto inline-flex items-center gap-2 rounded-xl border border-white/10 px-3 py-2 text-xs text-white/80 hover:text-white hover:border-white/20 transition">-->
-<!--            <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M5 19l1.5-1.5"/></svg>-->
-<!--            Theme-->
-<!--          </button>-->
+<!-- Page -->
+<main class="relative mx-auto max-w-md px-5 py-16 md:py-24">
+  <!-- Profile card -->
+  <section class="halo relative rounded-3xl p-[2px]">
+    <div class="glass rounded-3xl ring-1 ring-white/10 backdrop-blur-xl">
+      <!-- Header -->
+      <div class="flex items-center gap-4 p-6">
+        <!-- Avatar -->
+        <div class="relative">
+          <div class="absolute inset-0 rounded-full blur-xl opacity-70" style="background: radial-gradient(120px 120px at 50% 50%, rgba(var(--aqua),.6), transparent 60%)"></div>
+          <img src="img/logo.jpg" alt="Avatar" class="relative size-16 rounded-full ring-2 ring-white/30" />
         </div>
-
-        <!-- Bio -->
-        <p class="px-6 text-sm leading-relaxed text-white/70">
-         <strong> Angkorkey </strong> ផ្តល់ជូនផលិតផលដែលមានគុណភាពខ្ពស់ តម្លៃសមរម្យ និងសុវត្ថិភាពសម្រាប់អតិថិជនទាំងអស់
-        </p>
-
-        <!-- Link buttons -->
-        <div class="p-6 pt-4 space-y-3">
-
-          <!-- Telegram -->
-          <a class="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur transition hover:border-white/20 hover:bg-white/[.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/40"
-             href="https://t.me/Angkorkey_admin_2" target="_blank" rel="noopener">
-            <svg class="size-5 opacity-80 group-hover:opacity-100" viewBox="0 0 24 24" fill="currentColor"><path d="M9.999 15.2 9.9 19c.4 0 .6-.2.8-.4l2-1.9 4.2 3.1c.8.4 1.3.2 1.5-.7l2.7-12.7c.3-1.2-.4-1.6-1.2-1.3L2.8 9.4c-1.1.4-1.1 1-.2 1.3l4.6 1.4 10.7-6.7-7.9 8.7Z"/></svg>
-            <span class="flex-1 truncate">t.me/angkorkey_admin_2</span>
-            <span class="text-[10px] uppercase tracking-widest text-white/60">Chat</span>
-          </a>
-
-          <!-- Telegram Channel -->
-          <a class="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur transition hover:border-white/20 hover:bg-white/[.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-300/40"
-             href="https://t.me/angkorkey" target="_blank" rel="noopener">
-            <svg class="size-5 opacity-80 group-hover:opacity-100" viewBox="0 0 24 24" fill="currentColor"><path d="M9.999 15.2 9.9 19c.4 0 .6-.2.8-.4l2-1.9 4.2 3.1c.8.4 1.3.2 1.5-.7l2.7-12.7c.3-1.2-.4-1.6-1.2-1.3L2.8 9.4c-1.1.4-1.1 1-.2 1.3l4.6 1.4 10.7-6.7-7.9 8.7Z"/></svg>
-            <span class="flex-1 truncate">t.me/angkorkey</span>
-            <span class="text-[10px] uppercase tracking-widest text-white/60">Join</span>
-          </a>
-
-          <!-- TikTok -->
-          <a class="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur transition hover:border-white/20 hover:bg-white/[.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-fuchsia-400/40"
-             href="https://www.tiktok.com/@angkorkey" target="_blank" rel="noopener">
-            <svg class="size-5 opacity-80 group-hover:opacity-100" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c.5 2.8 2.5 5 5.1 5.6v3.4c-1.7 0-3.2-.6-4.6-1.6v6.6c0 3-2.3 5.4-5.3 5.4S2 19 2 16s2.4-5.4 5.3-5.4c.3 0 .6 0 .9.1v3.3c-.3-.1-.6-.2-.9-.2-1.1 0-2 1-2 2.2s.9 2.2 2 2.2 2-1 2-2.2V2h2.7Z"/></svg>
-            <span class="flex-1 truncate">tiktok.com/@angkorkey</span>
-            <span class="text-[10px] uppercase tracking-widest text-white/60">Follow</span>
-          </a>
-
-          <!-- Facebook Page -->
-          <a class="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur transition hover:border-white/20 hover:bg-white/[.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/40"
-             href="https://web.facebook.com/profile.php?id=61550673305154&rdid=dnczySCXNe4mXke6&share_url=https%3A%2F%2Fweb.facebook.com%2Fshare%2F1AavZFcvxh%2F%3F_rdc%3D1%26_rdr#" target="_blank" rel="noopener">
-            <svg class="size-5 opacity-80 group-hover:opacity-100" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12A10 10 0 1 0 10.6 21.9v-6.5h-2v-3.4h2V9.4c0-2 1.2-3.2 3-3.2.9 0 1.8.2 1.8.2v2h-1c-1 0-1.3.6-1.3 1.2v1.9h2.3l-.4 3.4h-1.9v6.5A10 10 0 0 0 22 12Z"/></svg>
-            <span class="flex-1 truncate">facebook.com/Angkorkey</span>
-            <span class="text-[10px] uppercase tracking-widest text-white/60">Like</span>
-          </a>
-
-
-
-        </div>
-
-
-        <!-- Footer actions -->
-        <div class="flex items-center justify-between px-6 pb-6 pt-2">
-          <button id="copyHandle" class="inline-flex items-center gap-2 text-xs text-white/70 hover:text-white transition">
-            <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="9" width="13" height="13" rx="2"/><rect x="2" y="2" width="13" height="13" rx="2"/></svg>
-            Copy @yourhandle
-          </button>
-          <span class="text-[10px] tracking-widest text-white/50">© <span id="year"></span> · Link·Neon</span>
+        <div class="min-w-0">
+          <h1 class="text-xl font-semibold tracking-tight">Angkorkey</h1>
+          <p class="text-white/70 text-sm">Social Media Links</p>
         </div>
       </div>
-    </section>
 
-    <!-- Credits / CTA -->
-<!--    <div class="mt-8 text-center text-xs text-white/50">-->
-<!--      Built with <span class="text-white/70">HTML</span>, <span class="text-white/70">Tailwind</span> & <span class="text-white/70">JS</span> · Customize the links & colors.-->
-<!--    </div>-->
-  </main>
+      <!-- Bio -->
+      <p class="px-6 text-sm leading-relaxed text-white/70">
+        <strong> Angkorkey </strong> ផ្តល់ជូនផលិតផលដែលមានគុណភាពខ្ពស់ តម្លៃសមរម្យ និងសុវត្ថិភាពសម្រាប់អតិថិជនទាំងអស់
+      </p>
 
-  <!-- Scripts -->
-  <script>
-    function isTikTokWebView() {
-      const ua = navigator.userAgent || '';
-      return /TikTok/i.test(ua);
+      <!-- Link buttons -->
+      <div class="p-6 pt-4 space-y-3">
+
+        <!-- Telegram -->
+        <a class="external-link group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur transition hover:border-white/20 hover:bg-white/[.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/40"
+           href="https://t.me/Angkorkey_admin_2" target="_blank" rel="noopener">
+          <svg class="size-5 opacity-80 group-hover:opacity-100" viewBox="0 0 24 24" fill="currentColor"><path d="M9.999 15.2 9.9 19c.4 0 .6-.2.8-.4l2-1.9 4.2 3.1c.8.4 1.3.2 1.5-.7l2.7-12.7c.3-1.2-.4-1.6-1.2-1.3L2.8 9.4c-1.1.4-1.1 1-.2 1.3l4.6 1.4 10.7-6.7-7.9 8.7Z"/></svg>
+          <span class="flex-1 truncate">t.me/angkorkey_admin_2</span>
+          <span class="text-[10px] uppercase tracking-widest text-white/60">Chat</span>
+        </a>
+
+        <!-- Telegram Channel -->
+        <a class="external-link group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur transition hover:border-white/20 hover:bg-white/[.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-300/40"
+           href="https://t.me/angkorkey" target="_blank" rel="noopener">
+          <svg class="size-5 opacity-80 group-hover:opacity-100" viewBox="0 0 24 24" fill="currentColor"><path d="M9.999 15.2 9.9 19c.4 0 .6-.2.8-.4l2-1.9 4.2 3.1c.8.4 1.3.2 1.5-.7l2.7-12.7c.3-1.2-.4-1.6-1.2-1.3L2.8 9.4c-1.1.4-1.1 1-.2 1.3l4.6 1.4 10.7-6.7-7.9 8.7Z"/></svg>
+          <span class="flex-1 truncate">t.me/angkorkey</span>
+          <span class="text-[10px] uppercase tracking-widest text-white/60">Join</span>
+        </a>
+
+        <!-- TikTok -->
+        <a class="external-link group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur transition hover:border-white/20 hover:bg-white/[.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-fuchsia-400/40"
+           href="https://www.tiktok.com/@angkorkey" target="_blank" rel="noopener">
+          <svg class="size-5 opacity-80 group-hover:opacity-100" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c.5 2.8 2.5 5 5.1 5.6v3.4c-1.7 0-3.2-.6-4.6-1.6v6.6c0 3-2.3 5.4-5.3 5.4S2 19 2 16s2.4-5.4 5.3-5.4c.3 0 .6 0 .9.1v3.3c-.3-.1-.6-.2-.9-.2-1.1 0-2 1-2 2.2s.9 2.2 2 2.2 2-1 2-2.2V2h2.7Z"/></svg>
+          <span class="flex-1 truncate">tiktok.com/@angkorkey</span>
+          <span class="text-[10px] uppercase tracking-widest text-white/60">Follow</span>
+        </a>
+
+        <!-- Facebook Page -->
+        <a class="external-link group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur transition hover:border-white/20 hover:bg-white/[.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/40"
+           href="https://web.facebook.com/profile.php?id=61550673305154&rdid=dnczySCXNe4mXke6&share_url=https%3A%2F%2Fweb.facebook.com%2Fshare%2F1AavZFcvxh%2F%3F_rdc%3D1%26_rdr#" target="_blank" rel="noopener">
+          <svg class="size-5 opacity-80 group-hover:opacity-100" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12A10 10 0 1 0 10.6 21.9v-6.5h-2v-3.4h2V9.4c0-2 1.2-3.2 3-3.2.9 0 1.8.2 1.8.2v2h-1c-1 0-1.3.6-1.3 1.2v1.9h2.3l-.4 3.4h-1.9v6.5A10 10 0 0 0 22 12Z"/></svg>
+          <span class="flex-1 truncate">facebook.com/Angkorkey</span>
+          <span class="text-[10px] uppercase tracking-widest text-white/60">Like</span>
+        </a>
+
+      </div>
+
+      <!-- Footer actions -->
+      <div class="flex items-center justify-between px-6 pb-6 pt-2">
+        <button id="copyHandle" class="inline-flex items-center gap-2 text-xs text-white/70 hover:text-white transition">
+          <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="9" width="13" height="13" rx="2"/><rect x="2" y="2" width="13" height="13" rx="2"/></svg>
+          Copy @angkorkey
+        </button>
+        <span class="text-[10px] tracking-widest text-white/50">© <span id="year"></span> · Link·Neon</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Scripts -->
+<script>
+  // Set current year
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Copy handle functionality
+  document.getElementById('copyHandle').addEventListener('click', () => {
+    navigator.clipboard.writeText('@angkorkey').then(() => {
+      const btn = document.getElementById('copyHandle');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg>Copied!';
+      setTimeout(() => btn.innerHTML = originalText, 2000);
+    });
+  });
+
+  // Detect TikTok webview
+  function isTikTokWebView() {
+    const ua = navigator.userAgent || '';
+    return /TikTok/i.test(ua) || /musical_ly/i.test(ua);
+  }
+
+  function isAndroid() {
+    return /Android/i.test(navigator.userAgent || '');
+  }
+
+  function isiOS() {
+    return /iPhone|iPad|iPod/i.test(navigator.userAgent || '');
+  }
+
+  // Handle external link clicks
+  function openInExternalBrowser(e) {
+    e.preventDefault();
+    const url = this.href;
+
+    if (!isTikTokWebView()) {
+      // Not in TikTok, open normally
+      window.open(url, '_blank');
+      return;
     }
-    function isAndroid() {
-      return /Android/i.test(navigator.userAgent || '');
-    }
-    function isiOS() {
-      return /iPhone|iPad|iPod/i.test(navigator.userAgent || '');
-    }
 
-    // Open in external browser (Chrome on Android) when inside TikTok webview
-    function openExternal(anchorEl) {
-      const raw = anchorEl.getAttribute('data-external') || anchorEl.href;
+    if (isAndroid()) {
+      // Android: Use Chrome intent to force external browser
+      try {
+        const urlObj = new URL(url);
+        const scheme = urlObj.protocol.replace(':', '');
+        const hostAndPath = urlObj.host + urlObj.pathname + urlObj.search + urlObj.hash;
 
-      // If not TikTok webview, let the normal link work
-      if (!isTikTokWebView()) return true;
+        // Chrome intent URI
+        const intent = `intent://${hostAndPath}#Intent;scheme=${scheme};package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(url)};end`;
 
-      // ANDROID: Force Chrome via intent (opens Chrome, not the in-app browser)
-      if (isAndroid()) {
-        // Example: intent://t.me/angkorkey#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=...;end
-        const url = new URL(raw);
-        const hostAndPath = (url.host + url.pathname + (url.search || '')).replace(/^\//, '');
-        const fallback = encodeURIComponent(raw);
-
-        const chromeIntent =
-                `intent://${hostAndPath}#Intent;scheme=${url.protocol.replace(':','')};` +
-                `package=com.android.chrome;S.browser_fallback_url=${fallback};end`;
-
-        // Use location to fully leave the webview
-        location.href = chromeIntent;
-
-        // Optional: also try to open telegram directly (works on some devices)
-        // setTimeout(() => location.href = `tg://resolve?domain=${url.pathname.replace('/','')}`, 200);
-
-        return false; // prevent default
+        window.location.href = intent;
+      } catch (err) {
+        // Fallback to normal open
+        window.location.href = url;
       }
+    } else if (isiOS()) {
+      // iOS: Try to open in Safari
+      // First attempt: use x-safari-https scheme (works on some iOS versions)
+      const safariUrl = url.replace(/^https?:\/\//, 'x-safari-https://');
+      window.location.href = safariUrl;
 
-      // iOS: cannot force Safari from most in-app browsers; open the normal URL.
-      // Tip the user if you want:
-      // alert('If this opens inside TikTok, tap ••• > “Open in default browser”.');
-      location.href = raw;
-      return false;
+      // Fallback after a short delay
+      setTimeout(() => {
+        window.location.href = url;
+      }, 500);
+    } else {
+      // Fallback for other platforms
+      window.location.href = url;
     }
-  </script>
+  }
+
+  // Attach click handlers to all external links
+  document.querySelectorAll('.external-link').forEach(link => {
+    link.addEventListener('click', openInExternalBrowser);
+  });
+</script>
 
 </body>
 </html>
