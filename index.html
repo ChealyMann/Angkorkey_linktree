@@ -9,30 +9,33 @@
   <link rel="icon" href="img/logo.jpg">
   <style>
     :root { --neon: 255 99 247; --aqua: 34 211 238; --vio: 139 92 246; --bg: 2 6 23; }
-
     html { scroll-behavior: smooth }
 
     .halo::before{
-      content:"";position:absolute;inset:-2px;z-index:-1;
-      background:conic-gradient(from 0deg,rgba(var(--aqua),.7),rgba(var(--neon),.7),rgba(var(--vio),.7),rgba(var(--aqua),.7));
-      filter:blur(18px) saturate(130%);border-radius:28px;animation:spin 12s linear infinite;
+      content:""; position:absolute; inset:-2px; z-index:-1;
+      background:conic-gradient(from 0deg, rgba(var(--aqua),.7), rgba(var(--neon),.7), rgba(var(--vio),.7), rgba(var(--aqua),.7));
+      filter:blur(18px) saturate(130%); border-radius:28px; animation:spin 12s linear infinite;
       mask:linear-gradient(#000,#000) content-box,linear-gradient(#000,#000);
       -webkit-mask:linear-gradient(#000,#000) content-box,linear-gradient(#000,#000);
-      padding:2px;-webkit-mask-composite:xor;mask-composite:exclude;opacity:.45;
+      padding:2px; -webkit-mask-composite:xor; mask-composite:exclude; opacity:.45;
     }
-    .glass{background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02));}
-    .gridlines{background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:38px 38px;mask-image:radial-gradient(80% 60% at 50% 30%,#000 60%,transparent 100%);}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+    .glass{ background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02)); }
+    .gridlines{
+      background-image:linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px);
+      background-size:38px 38px; mask-image:radial-gradient(80% 60% at 50% 30%, #000 60%, transparent 100%);
+    }
+    @keyframes spin{ to{ transform:rotate(360deg) } }
+    @keyframes float{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-6px) } }
 
     /* Toast */
     .toast{
-      position:fixed;top:20px;left:50%;transform:translateX(-50%);
-      background:rgba(34,211,238,.95);color:#000;padding:12px 24px;border-radius:12px;
-      font-size:14px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;
+      position:fixed; top:20px; left:50%; transform:translateX(-50%);
+      background:rgba(34,211,238,.95); color:#000; padding:12px 24px; border-radius:12px;
+      font-size:14px; font-weight:600; z-index:9999; opacity:0; transition:opacity .3s;
       box-shadow:0 4px 20px rgba(34,211,238,.4);
     }
-    .toast.show{opacity:1}
+    .toast.show{ opacity:1 }
   </style>
 </head>
 <body class="relative min-h-screen bg-[rgb(var(--bg))] text-white overflow-hidden">
@@ -97,11 +100,23 @@
         </a>
       </div>
 
+      <!-- Footer actions -->
       <div class="flex items-center justify-between px-6 pb-6 pt-2">
-        <button id="copyHandle" class="inline-flex items-center gap-2 text-xs text-white/70 hover:text-white transition">
-          <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="9" width="13" height="13" rx="2"/><rect x="2" y="2" width="13" height="13" rx="2"/></svg>
-          Copy @angkorkey
-        </button>
+        <div class="flex gap-3">
+          <!-- NEW: Open in browser button (shown only in in-app browsers) -->
+          <button id="openExternalBtn"
+                  class="inline-flex items-center gap-2 text-xs text-white/80 hover:text-white transition hidden">
+            <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path d="M14 3h7v7M10 14 21 3M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/>
+            </svg>
+            Open in browser
+          </button>
+
+          <button id="copyHandle" class="inline-flex items-center gap-2 text-xs text-white/70 hover:text-white transition">
+            <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="9" width="13" height="13" rx="2"/><rect x="2" y="2" width="13" height="13" rx="2"/></svg>
+            Copy @angkorkey
+          </button>
+        </div>
         <span class="text-[10px] tracking-widest text-white/50">© <span id="year"></span> · Link·Neon</span>
       </div>
     </div>
@@ -136,86 +151,134 @@
   document.getElementById('copyHandle').addEventListener('click', () => {
     navigator.clipboard.writeText('@angkorkey').then(() => {
       const btn = document.getElementById('copyHandle');
-      const originalText = btn.innerHTML;
+      const original = btn.innerHTML;
       btn.innerHTML = '<svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg>Copied!';
-      setTimeout(() => btn.innerHTML = originalText, 2000);
+      setTimeout(() => btn.innerHTML = original, 2000);
     });
   });
 
-  // Detection
-  function isTikTok(){ const ua = navigator.userAgent||navigator.vendor||window.opera; return /TikTok|musical_ly|Bytedance/i.test(ua); }
+  /* ---------- Environment detection ---------- */
   function isAndroid(){ return /Android/i.test(navigator.userAgent); }
   function isiOS(){ return /iPhone|iPad|iPod/i.test(navigator.userAgent); }
+  function isTikTok(){ return /TikTok|musical_ly|Bytedance/i.test(navigator.userAgent); }
+  function isInstagram(){ return /Instagram/i.test(navigator.userAgent); }
+  function isFacebookApp(){ return /FBAN|FB_IAB|FBAV/i.test(navigator.userAgent); }
 
-  // Toast (optional hint)
+  // Show "Open in browser" button only in in-app browsers
+  (function showOpenExternal(){
+    const btn = document.getElementById('openExternalBtn');
+    if (!btn) return;
+    if (isTikTok() || isInstagram() || isFacebookApp()) btn.classList.remove('hidden');
+  })();
+
+  // Toast
   function showToast(message){
     const el = document.createElement('div');
-    el.className = 'toast'; el.textContent = message; document.body.appendChild(el);
+    el.className = 'toast';
+    el.textContent = message;
+    document.body.appendChild(el);
     setTimeout(()=>el.classList.add('show'),100);
     setTimeout(()=>{ el.classList.remove('show'); setTimeout(()=>el.remove(),300); }, 3000);
   }
 
-  // Share sheet often jumps into Telegram
+  /* ---------- Open current page in a real browser ---------- */
+  function openInRealBrowser(url){
+    url = url || window.location.href;
+
+    if (isAndroid()){
+      const encoded = encodeURIComponent(url);
+      // Kick to Chrome outside the webview
+      window.location.href =
+              `intent://${url.replace(/^https?:\/\//,'')}` +
+              `#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encoded};end;`;
+      setTimeout(()=>{ window.location.href = url; }, 900);
+      return;
+    }
+
+    if (isiOS()){
+      // Try Chrome scheme if available
+      try {
+        const chromeURL = url.startsWith('https://')
+                ? url.replace(/^https:\/\//,'googlechromes://')
+                : url.replace(/^http:\/\//,'googlechrome://');
+        window.location.href = chromeURL;
+      } catch(e){}
+      // Fallback: hint + same URL (user taps Safari menu)
+      setTimeout(()=>{
+        alert('On iPhone: tap the ••• menu and choose “Open in Safari”.');
+        window.location.href = url;
+      }, 600);
+      return;
+    }
+
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+
+  const openBtn = document.getElementById('openExternalBtn');
+  if (openBtn){
+    const fire = (e)=>{ e.preventDefault(); e.stopPropagation(); openInRealBrowser(); };
+    openBtn.addEventListener('click', fire, true);
+    openBtn.addEventListener('touchend', fire, true);
+  }
+
+  /* ---------- Telegram helpers ---------- */
   async function tryShareToTelegram(username){
     const url = `https://t.me/${username}`;
     if (navigator.share){
       try { await navigator.share({ title: 'Open in Telegram', text: 'Open in Telegram:', url }); return true; }
-      catch(e){ /* cancelled or blocked */ }
+      catch(e){ /* user cancelled */ }
     }
     return false;
   }
 
-  // Helper overlay for TikTok
   function showTikTokHelp(username, web){
-    const $wrap = document.getElementById('tt-help');
-    if (!$wrap) return;
-    $wrap.classList.remove('hidden');
+    const wrap = document.getElementById('tt-help');
+    if (!wrap) return;
+    wrap.classList.remove('hidden');
 
-    const $close = document.getElementById('tt-close');
-    const $share = document.getElementById('tt-share');
-    const $browser = document.getElementById('tt-browser');
-    const $copy = document.getElementById('tt-copy');
+    const close = document.getElementById('tt-close');
+    const share = document.getElementById('tt-share');
+    const browser = document.getElementById('tt-browser');
+    const copy = document.getElementById('tt-copy');
 
-    const hide = ()=> $wrap.classList.add('hidden');
-    $close.onclick = hide;
+    const hide = ()=> wrap.classList.add('hidden');
+    close.onclick = hide;
 
-    $share.onclick = async ()=>{
+    share.onclick = async ()=>{
       const ok = await tryShareToTelegram(username);
       if (!ok) alert('Sharing not supported here. Try "Open in browser" or copy the link.');
       hide();
     };
 
-    $browser.onclick = ()=>{
+    browser.onclick = ()=>{
       if (isAndroid()){
         const encoded = encodeURIComponent(web);
-        // Ask for Chrome specifically
         window.location.href = `intent://${web.replace(/^https?:\/\//,'')}` +
                 `#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encoded};end;`;
         setTimeout(()=>{ window.location.href = web; }, 800);
       } else {
-        alert('Tap the ••• menu in the top-right and choose "Open in browser (Safari)".');
+        alert('Tap the ••• menu and choose "Open in browser (Safari)".');
         window.location.href = web;
       }
       hide();
     };
 
-    $copy.onclick = async ()=>{
+    copy.onclick = async ()=>{
       try { await navigator.clipboard.writeText(web); alert('Copied! Paste into Telegram.'); }
       catch(e){ alert('Copy failed. Long-press the link and copy manually.'); }
       hide();
     };
   }
 
-  // Open Telegram (prefer native app)
   function openTelegram(username){
     const web = `https://t.me/${username}`;
     const tg = `tg://resolve?domain=${username}`;
 
-    // Try native scheme
+    // Try native scheme first
     try { window.location.href = tg; } catch(e){}
 
     if (isAndroid()){
-      // Package-targeted intents (Telegram, then Telegram X)
+      // Target Telegram package, then Telegram X
       setTimeout(()=>{ window.location.href =
               `intent://t.me/${username}#Intent;scheme=https;package=org.telegram.messenger;S.browser_fallback_url=${encodeURIComponent(web)};end;`;
       }, 400);
@@ -224,24 +287,19 @@
               `intent://t.me/${username}#Intent;scheme=https;package=org.thunderdog.challegram;S.browser_fallback_url=${encodeURIComponent(web)};end;`;
       }, 900);
 
-      // Final fallback: web (shows "Open in Telegram" button)
       setTimeout(()=>{ window.location.href = web; }, 1500);
     } else if (isiOS()){
-      // On iOS, tg:// then universal link; then App Store
       setTimeout(()=>{ window.location.href = web; }, 700);
       setTimeout(()=>{ window.location.href = 'itms-apps://itunes.apple.com/app/id686449807'; }, 2000);
       if (isTikTok()) showToast('If prompted, choose "Open in Telegram".');
     } else {
-      // Desktop/others
       setTimeout(()=>{ window.open(web, '_blank', 'noopener,noreferrer'); }, 800);
     }
 
-    if (isTikTok()){
-      showTikTokHelp(username, web);
-    }
+    if (isTikTok()) showTikTokHelp(username, web);
   }
 
-  // Generic external-link handler (Telegram + others)
+  /* ---------- Generic external link handler ---------- */
   function handleLinkClick(e){
     e.preventDefault(); e.stopPropagation();
 
@@ -253,7 +311,7 @@
       return;
     }
 
-    // Non-Telegram: try to break out of TikTok to external browser on Android
+    // Non-Telegram links: try to break out of TikTok on Android
     if (isTikTok() && isAndroid()){
       const encoded = encodeURIComponent(url);
       window.location.href = `intent://${url.replace(/^https?:\/\//,'')}` +
@@ -265,7 +323,6 @@
     window.open(url, '_blank', 'noopener,noreferrer');
   }
 
-  // Attach handlers
   document.querySelectorAll('.external-link').forEach(link => {
     link.addEventListener('click', handleLinkClick, true);
     link.addEventListener('touchend', handleLinkClick, true);
