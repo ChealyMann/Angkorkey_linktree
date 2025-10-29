@@ -136,81 +136,51 @@
 
   <!-- Scripts -->
   <script>
-    // ===== Starfield / particles =====
-    const canvas = document.getElementById('bg');
-    const ctx = canvas.getContext('2d');
-    let w, h, dpr, stars = [];
-
-    function resize() {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      w = canvas.width = innerWidth * dpr;
-      h = canvas.height = innerHeight * dpr;
-      canvas.style.width = innerWidth + 'px';
-      canvas.style.height = innerHeight + 'px';
-      initStars();
+    function isTikTokWebView() {
+      const ua = navigator.userAgent || '';
+      return /TikTok/i.test(ua);
+    }
+    function isAndroid() {
+      return /Android/i.test(navigator.userAgent || '');
+    }
+    function isiOS() {
+      return /iPhone|iPad|iPod/i.test(navigator.userAgent || '');
     }
 
-    function initStars() {
-      const count = Math.floor((innerWidth * innerHeight) / 9000);
-      stars = Array.from({ length: count }, () => ({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        z: Math.random() * 0.6 + 0.4,
-        v: Math.random() * 0.2 + 0.05
-      }));
-    }
+    // Open in external browser (Chrome on Android) when inside TikTok webview
+    function openExternal(anchorEl) {
+      const raw = anchorEl.getAttribute('data-external') || anchorEl.href;
 
-    function tick() {
-      ctx.clearRect(0, 0, w, h);
-      for (const s of stars) {
-        s.x += s.v * 8; // drift
-        if (s.x > w) s.x = 0;
-        const size = s.z * 1.5;
-        ctx.globalAlpha = s.z * 0.7;
-        ctx.fillStyle = `rgb(${34 + s.z*80}, ${211 - s.z*40}, ${238})`;
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, size, 0, Math.PI * 2);
-        ctx.fill();
+      // If not TikTok webview, let the normal link work
+      if (!isTikTokWebView()) return true;
+
+      // ANDROID: Force Chrome via intent (opens Chrome, not the in-app browser)
+      if (isAndroid()) {
+        // Example: intent://t.me/angkorkey#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=...;end
+        const url = new URL(raw);
+        const hostAndPath = (url.host + url.pathname + (url.search || '')).replace(/^\//, '');
+        const fallback = encodeURIComponent(raw);
+
+        const chromeIntent =
+                `intent://${hostAndPath}#Intent;scheme=${url.protocol.replace(':','')};` +
+                `package=com.android.chrome;S.browser_fallback_url=${fallback};end`;
+
+        // Use location to fully leave the webview
+        location.href = chromeIntent;
+
+        // Optional: also try to open telegram directly (works on some devices)
+        // setTimeout(() => location.href = `tg://resolve?domain=${url.pathname.replace('/','')}`, 200);
+
+        return false; // prevent default
       }
-      requestAnimationFrame(tick);
+
+      // iOS: cannot force Safari from most in-app browsers; open the normal URL.
+      // Tip the user if you want:
+      // alert('If this opens inside TikTok, tap ••• > “Open in default browser”.');
+      location.href = raw;
+      return false;
     }
-
-    addEventListener('resize', resize);
-    resize();
-    tick();
-
-    // ===== Copy handle button =====
-    const copyBtn = document.getElementById('copyHandle');
-    copyBtn.addEventListener('click', async () => {
-      const handle = '@yourhandle';
-      try {
-        await navigator.clipboard.writeText(handle);
-        copyBtn.innerHTML = '<span class="text-emerald-300">Copied</span>';
-        setTimeout(() => (copyBtn.innerHTML = `\n          <svg class=\"size-4\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\"/><rect x=\"2\" y=\"2\" width=\"13\" height=\"13\" rx=\"2\"/></svg>\n          Copy @yourhandle\n        `), 1200);
-      } catch (e) {
-        alert('Copy failed');
-      }
-    });
-
-    // ===== Theme toggle (switch accent hues) =====
-    const toggle = document.getElementById('themeToggle');
-    let theme = 0;
-    const palettes = [
-      { neon: '255 99 247', aqua: '34 211 238', vio: '139 92 246' }, // cyan/pink/violet
-      { neon: '99 102 241', aqua: '16 185 129', vio: '244 114 182' }, // indigo/emerald/rose
-      { neon: '250 204 21', aqua: '59 130 246', vio: '236 72 153' }, // gold/blue/pink
-    ];
-
-    toggle.addEventListener('click', () => {
-      theme = (theme + 1) % palettes.length;
-      const p = palettes[theme];
-      document.documentElement.style.setProperty('--neon', p.neon);
-      document.documentElement.style.setProperty('--aqua', p.aqua);
-      document.documentElement.style.setProperty('--vio', p.vio);
-    });
-
-    // Year
-    document.getElementById('year').textContent = new Date().getFullYear();
   </script>
+
 </body>
 </html>
